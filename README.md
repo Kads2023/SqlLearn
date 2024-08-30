@@ -24,3 +24,10 @@ exec [SDPWH].[MainWH].[sp_DWH_queryfactinstrumentstatistics]
 exec [SDPWH].[MainWH].[sp_DWH_queryfactinstrumentstatistics]
 @InstrumentIdList = '', @YearsList = '', @MonthsList = ''
 ;
+
+exec [SDPWH].[MainWH].[sp_DWH_queryfactreratereccomendations]
+@SourceEnv = ''
+;
+
+exec [SDPWH].[MainWH].[sp_DWH_queryfactreratereccomendations]
+;
