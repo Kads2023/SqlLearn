@@ -31,3 +31,19 @@ exec [SDPWH].[MainWH].[sp_DWH_queryfactreratereccomendations]
 
 exec [SDPWH].[MainWH].[sp_DWH_queryfactreratereccomendations]
 ;
+
+
+
+EXEC [SalesWH].[sp_DWH_queryfactinstrumentstatistics] 
+'
+BBG0107G4377,
+BBG00L7LX529,
+BBG000GKPSZ0
+',
+'
+2023
+',
+'
+2023-1,
+2023-12
+'
