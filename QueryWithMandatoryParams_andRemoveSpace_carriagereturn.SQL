@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [MainWH].[sp_DWH_queryfactinstrumentstatistics]    Script Date: 05/09/2024 14:12:26 ******/
+/****** Object:  StoredProcedure [SalesWH].[sp_DWH_queryfactinstrumentstatistics]    Script Date: 09/09/2024 12:02:20 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,16 +9,19 @@ GO
 
 
 
+
+
+
 -- =============================================
 -- Author:      Kathambaree
 -- ALTER Date:  2024-08-21
 -- Description: Query fact instrument statistics
 -- =============================================
-ALTER PROCEDURE [SalesWH].[sp_DWH_queryfactinstrumentstatistics]
-	@BBGIdList varchar(max) = '',
-	@YearsList varchar(max) = '',
-	@MonthsList varchar(max) = '',
-	@SourceEnv AS nvarchar(max) = 'sales'
+ALTER PROCEDURE [MainWH].[sp_DWH_queryfactinstrumentstatistics]
+	@BBGIdList varchar(max) = NULL,
+	@YearsList varchar(max) = NULL,
+	@MonthsList varchar(max) = NULL,
+	@SourceEnv AS nvarchar(max) = ''
 AS
 BEGIN
 	DECLARE @BBGIdJoin AS nvarchar(max) = NULL;
@@ -33,6 +36,7 @@ BEGIN
 	DECLARE @StripString varchar(80) = 'STUFF(value,1,ISNULL(NULLIF(PATINDEX(@Pattern,value),0)-1,0),'''')';
 	DECLARE @PatternStart varchar(5) = '%[^';
 	DECLARE @PatternEnd varchar(5) = ']%';
+		
 	IF NULLIF(@SourceEnv, '') IS NULL
 		BEGIN
 			SET @GoldDataBaseName = 'MainWH'
@@ -65,6 +69,7 @@ BEGIN
 			IF NULLIF(@MonthsList, '') IS NULL
 				BEGIN
 					SET @MonthsListJoin = ''
+					SET @MonthsList = ''
 					IF NOT NULLIF(@YearsList, '') IS NULL
 						BEGIN
 							SET @YearsListJoin = '
@@ -77,6 +82,7 @@ BEGIN
 					ELSE
 						BEGIN
 							SET @YearsListJoin = ''
+							SET @YearsList = ''
 						END
 				END
 			ELSE
@@ -156,7 +162,14 @@ BEGIN
 			--PRINT @WithClause;
 
 			SET @SelectClause = 'SELECT
-			fis.*
+			 fis.[CompositeBbgid] as InstrumentId
+			,fis.[YearFrom]
+			,fis.[MonthFrom]
+			,fis.[Type]
+			,fis.[Value]
+			,fis.[Currency]
+			,fis.[YearTo]
+			,fis.[MonthTo]
 			FROM
 			[SDPWH].[' + @GoldDataBaseName + '].[' + @GoldTableName + '] fis';
 	
@@ -164,7 +177,7 @@ BEGIN
 			--PRINT @SelectClause;
 
 			SET @OrderByClause = '
-			ORDER BY CompositeBbgid, YearFrom, MonthFrom, YearTo, MonthTo, Type';
+			ORDER BY fis.CompositeBbgid, fis.YearFrom, fis.MonthFrom, fis.YearTo, fis.MonthTo, fis.Type';
 	
 			--PRINT '';
 			--PRINT '@OrderByClause';
