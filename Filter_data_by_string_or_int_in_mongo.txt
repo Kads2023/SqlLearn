@@ -1,0 +1,10 @@
+String --> {"MinorCodeEntityId":  ''}
+
+
+AND --> 
+{
+  "$and":[
+    {"IsInternal":{"$in": [false]}},
+    {"PositionId":{"$ne": null}}
+  ]
+}
