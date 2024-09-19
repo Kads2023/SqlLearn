@@ -1,5 +1,7 @@
 go_back_by_n_days --> Int --> 3 (Pipeline Parameter)
 
+go_back_by_n_days --> Int --> @if(equals(toLower(pipeline().parameters.CopyType), 'full'), 10000, pipeline().parameters.go_back_by_n_days)
+
 days_to_seconds --> @mul(86400, pipeline().parameters.go_back_by_n_days) (Pipeline Variable)
 
 Mongo source Filter -->
@@ -19,4 +21,34 @@ Mongo source Filter -->
             )
         })
     }
+}
+
+
+{
+  "LastPortfolioUpdateDate": {
+    "$gte": {
+      "$date": "@{formatDateTime(addDays(utcNow(), mul(-1, int(variables('days')))), 'yyyy-MM-ddTHH:mm:ss.fffZ')}"
+    }
+  }
+}
+
+
+
+{
+  "$or": [
+    {
+      "CreateAudit.Date": {
+        "$gte": {
+          "$date": "@{formatDateTime(addDays(utcNow(), mul(-1, int(variables('days')))), 'yyyy-MM-ddTHH:mm:ss.fffZ')}"
+        }
+      }
+    },
+    {
+      "UpdateAudit.Date": {
+        "$gte": {
+          "$date": "@{formatDateTime(addDays(utcNow(), mul(-1, int(variables('days')))), 'yyyy-MM-ddTHH:mm:ss.fffZ')}"
+        }
+      }
+    }
+  ]
 }
